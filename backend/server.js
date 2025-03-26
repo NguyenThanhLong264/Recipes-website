@@ -1,28 +1,23 @@
 import express from 'express';
-import db from './config/db.js';
+import connectDB from './config/db.js'; // Import the async function
 import dotenv from 'dotenv';
-import { getRandomRecipes, searchRecipes } from "./servieces/spoonacular.js";
+import recipesRouter from "./routes/recipes.js";
+import cors from "cors";
 
 dotenv.config();
 const app = express();
 app.use(express.json());
+app.use(cors()); // Allow frontend requests
 
-// Route to fetch random recipes
-app.get("/api/recipes/random", async (req, res) => {
-    const recipes = await getRandomRecipes();
-    res.json(recipes);
-});
+// Connect to Database
+(async () => {
+    await connectDB(); // ✅ Ensure DB connects before running server
+})();
 
-// Route to search recipes by keyword
-app.get("/api/recipes/search", async (req, res) => {
-    const { query } = req.query;
-    if (!query) return res.status(400).json({ error: "Query is required" });
+app.use("/api/recipes", recipesRouter);
 
-    const recipes = await searchRecipes(query);
-    res.json(recipes);
-});
 // Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`🚀 Server running on port ${PORT}`);
 });
