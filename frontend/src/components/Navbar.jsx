@@ -36,12 +36,35 @@ export default function NavBar() {
                         </Button>
                     </Box>
 
-                    <Box>
-                        <Button color="inherit" component={Link} href="/login">
+                    <Box sx={{ display: 'flex', gap: 2 }}>
+                        <Button
+                            variant="outlined"
+                            component={Link}
+                            href="/login"
+                            sx={{
+                                color: '#F5E1C0',
+                                borderColor: '#F5E1C0',
+                                '&:hover': {
+                                    borderColor: '#FFF3E0',
+                                    backgroundColor: 'rgba(245, 225, 192, 0.04)',
+                                },
+                            }}
+                        >
                             Login
                         </Button>
-                        <Button color="inherit" component={Link} href="/signup">
-                            Signup
+                        <Button
+                            variant="contained"
+                            component={Link}
+                            href="/signup"
+                            sx={{
+                                backgroundColor: '#FF9800',
+                                color: 'white',
+                                '&:hover': {
+                                    backgroundColor: '#F57C00',
+                                },
+                            }}
+                        >
+                            Sign Up
                         </Button>
                     </Box>
                 </Toolbar>
