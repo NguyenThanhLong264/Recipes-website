@@ -30,6 +30,7 @@ router.get("/", async (req, res) => {
 router.get("/:id/information", async (req, res) => {
     const recipeId = req.params.id;
     try {
+        console.log(`Processing request for recipe ID: ${recipeId}`);
         const recipe = await getRecipeInformation(recipeId);
         if (!recipe) {
             return res.status(404).json({ message: "Recipe not found" });
@@ -38,14 +39,13 @@ router.get("/:id/information", async (req, res) => {
     } catch (error) {
         console.error("Recipe information error:", {
             id: recipeId,
-            status: error.response?.status,
-            message: error.response?.data?.message || error.message
+            error: error.message,
+            response: error.response?.data
         });
-        
-        // Forward the actual error status from Spoonacular
         const statusCode = error.response?.status || 500;
         res.status(statusCode).json({ 
-            message: error.response?.data?.message || "Error fetching recipe information"
+            message: error.response?.data?.message || "Error fetching recipe information",
+            error: error.message
         });
     }
 });
