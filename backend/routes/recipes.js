@@ -1,5 +1,5 @@
 import express from "express";
-import { getRandomRecipes, searchRecipes } from "../servieces/spoonacular.js"; // Fixed import path
+import { getRandomRecipes, searchRecipes, getRecipeInformation } from "../servieces/spoonacular.js";
 
 const router = express.Router();
 
@@ -23,6 +23,30 @@ router.get("/", async (req, res) => {
     } catch (error) {
         console.error("Server error:", error);
         res.status(500).json({ message: "Error searching recipes" });
+    }
+});
+
+// Get recipe information by ID
+router.get("/:id/information", async (req, res) => {
+    const recipeId = req.params.id;
+    try {
+        const recipe = await getRecipeInformation(recipeId);
+        if (!recipe) {
+            return res.status(404).json({ message: "Recipe not found" });
+        }
+        res.json(recipe);
+    } catch (error) {
+        console.error("Recipe information error:", {
+            id: recipeId,
+            status: error.response?.status,
+            message: error.response?.data?.message || error.message
+        });
+        
+        // Forward the actual error status from Spoonacular
+        const statusCode = error.response?.status || 500;
+        res.status(statusCode).json({ 
+            message: error.response?.data?.message || "Error fetching recipe information"
+        });
     }
 });
 

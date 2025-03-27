@@ -36,3 +36,21 @@ export const searchRecipes = async (query) => {
         return [];
     }
 };
+
+export const getRecipeInformation = async (id) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/${id}/information`, {
+            params: {
+                apiKey: SPOONACULAR_API_KEY
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Spoonacular API Error:", {
+            status: error.response?.status,
+            message: error.response?.data?.message || error.message,
+            id: id
+        });
+        throw error;
+    }
+};

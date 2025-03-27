@@ -1,59 +1,49 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { Card, CardContent, CardMedia, Typography } from "@mui/material";
+import { useRouter } from "next/navigation";
 
-export default function RecipeList() {
-    const [recipes, setRecipes] = useState([]);
-    const [query, setQuery] = useState("");
-
-    useEffect(() => {
-        fetchRecipes(); // Default fetch on load
-    }, []);
-
-    const fetchRecipes = async () => {
-        try {
-            const response = await fetch("http://localhost:5000/api/recipes/random", {
-                method: "GET",
-                headers: { "Content-Type": "application/json" },
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log("✅ Recipes fetched:", data);
-            setRecipes(data)
-            return data;
-        } catch (error) {
-            console.error("❌ Fetch error:", error);
-        }
-    };
-
-    const handleSearch = () => {
-        fetchRecipes(query);
-    };
+export default function RecipeCard({ recipe }) {
+    const router = useRouter();
 
     return (
-        <div>
-            <h2>Recipes</h2>
-            <input
-                type="text"
-                placeholder="Search for recipes..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
+        <Card 
+            sx={{ 
+                width: '300px',
+                height: '350px',
+                margin: '0 auto',
+                cursor: 'pointer',
+                '&:hover': {
+                    transform: 'scale(1.02)',
+                    transition: 'transform 0.2s ease-in-out'
+                }
+            }}
+            onClick={() => router.push(`/recipes/${recipe.id}`)}
+        >
+            <CardMedia
+                component="img"
+                height="200"
+                image={recipe.image}
+                alt={recipe.title}
+                sx={{ objectFit: 'cover' }}
             />
-            <button onClick={handleSearch}>Search</button>
-            <div>
-                {recipes.length > 0 ? (
-                    <ul>
-                        {recipes.map((recipe) => (
-                            <li key={recipe.id}>{recipe.title}</li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>No recipes found.</p>
-                )}
-            </div>
-        </div>
+            <CardContent>
+                <Typography 
+                    variant="h6" 
+                    component="div"
+                    sx={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        lineHeight: '1.5',
+                        height: '3em'
+                    }}
+                >
+                    {recipe.title}
+                </Typography>
+            </CardContent>
+        </Card>
     );
 }
